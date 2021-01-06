@@ -10,22 +10,24 @@ const Card = (props) => {
     //const dispatch = useDispatch();
 
     return (
+      <TouchableOpacity onPress={() => props.navigation.navigate('JobDetails', {jobId: props.id})}>
         <View style={styles.card}>
           <View style={styles.positionContainer}>
-            <Text style={styles.position}>Associate Software Engineer</Text>
+            <Text style={styles.position}>{props.position.length > 30 ? props.position.slice(0, 30) + '...' : props.position}</Text>
           </View>
           <View style={styles.imageContainer}>
-            <ImageBackground source={require('../assets/images/softeng.jpg')} style={styles.image}>
-              <Text style={styles.salary}>Php 30,000.00</Text>
+            <ImageBackground source={{uri: props.src}} style={styles.image}>
+              <Text style={styles.salary}>Php {props.salary}</Text>
               <View style={styles.location}>
-                <Text style={styles.locationText}>Makati City</Text>
+                <Text style={styles.locationText}>{props.location.length > 12 ? props.location.slice(0, 9) + '...' : props.location}</Text>
               </View>
             </ImageBackground>
           </View>
           <View style={styles.description}>
-            <Text style={styles.descriptionText}>This is the description.</Text>
+            <Text style={styles.descriptionText}>{props.description.length > 100 ? props.description.slice(0, 100) + '...' : props.description}</Text>
           </View>
         </View>
+      </TouchableOpacity>
     );
 }
 
@@ -46,8 +48,9 @@ const styles = StyleSheet.create({
     padding: 10
   },
   position: {
+    fontFamily: 'Ubuntu-Bold',
     fontSize: 18,
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
     color: 'gray'
   },
   imageContainer: {
@@ -63,6 +66,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end'
   },
   salary: {
+    fontFamily: 'Ubuntu-Bold',
     fontSize: 30,
     color: '#fff',
     margin: 10
@@ -71,11 +75,13 @@ const styles = StyleSheet.create({
     margin: 10,
     backgroundColor: '#2652B0',
     height: 25,
-    width: 80,
-    borderRadius: 5
+    width: 90,
+    borderRadius: 5,
+    paddingTop: 3
   },
   locationText: {
-    fontSize: 20,
+    fontFamily: 'Ubuntu',
+    fontSize: 13,
     color: '#fff',
     textAlign: 'center'
   },
@@ -83,7 +89,8 @@ const styles = StyleSheet.create({
     margin: 10
   },
   descriptionText: {
-    fontSize: 16,
+    fontFamily: 'Ubuntu',
+    fontSize: 14,
     color: 'gray'
   }
 });

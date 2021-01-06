@@ -23,10 +23,12 @@ function stackNavigator() {
       <Stack.Screen
         name="JobDetails"
         component={JobDetailsScreen}
+        options={{title: 'Job Details'}}
       />
       <Stack.Screen
         name="AddJob"
         component={AddJobScreen}
+        options={{title: 'Add Job'}}
       />
     </Stack.Navigator>
   );
