@@ -1,13 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View, Image, TouchableOpacity, ImageBackground } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-//import { useDispatch } from 'react-redux';
-
-//import * as jobsAction from '../redux/actions/jobsAction';
 
 const Card = (props) => {
-
-    //const dispatch = useDispatch();
 
     return (
       <TouchableOpacity onPress={() => props.navigation.navigate('JobDetails', {jobId: props.id})}>

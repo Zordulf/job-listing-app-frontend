@@ -1,42 +1,87 @@
-import React from 'react';
-import { StyleSheet, View, Text, ScrollView, Image } from 'react-native';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text, ScrollView, Image, Button, Alert } from 'react-native';
+
+import baseURL from '../assets/common/baseUrl';
 
 const JobDetailsScreen = (props) => {
 
   const {jobId} = props.route.params;
+  const [jobDetail, setJobDetail] = useState([]);
+       
+  const getDetails = async () => {
+    fetch(`${baseURL}${jobId}`)
+      .then(res => res.json())
+      .then(async (data) => {
+        try {
+          setJobDetail(data);
+        } catch(e) {
+          console.log(e);
+        }
+      })
+  }
 
-  const job = useSelector(state => state.job.jobs.find(job => job._id == jobId));
+  const deleteJob = async () => {
+    fetch(`${baseURL}${jobId}`, {method: 'DELETE'})
+      .then(res => res.json())
+      .then(async (data) => {
+        try {
+          Alert.alert('Job deleted successfully!')
+        } catch(e) {
+          Alert.alert('An error occurred, please try again.', [{text: 'OK'}]);
+          console.log(e);
+        }
+      })
+  }
+
+  useEffect(() => {
+    getDetails();
+    return () => {
+      setJobDetail([]);
+    }
+  }, [])
 
   return (
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.heading}>
-          <Text style={styles.position}>{job.position}</Text>
+          <Text style={styles.position}>{jobDetail.position}</Text>
         </View>
         <View>
-          <Image source={{uri: job.image}} style={styles.image}/>
+          <Image source={{uri: jobDetail.image}} style={styles.image}/>
         </View>
         <View style={styles.group}>
           <Text style={styles.label}>Position: </Text>
-          <Text style={styles.value}>{job.position}</Text>
+          <Text style={styles.value}>{jobDetail.position}</Text>
         </View>
         <View style={styles.group}>
           <Text style={styles.label}>Salary: </Text>
-          <Text style={styles.value}>Php {job.salary}</Text>
+          <Text style={styles.value}>Php {jobDetail.salary}</Text>
         </View>
         <View style={styles.group}>
           <Text style={styles.label}>Location: </Text>
-          <Text style={styles.value}>{job.location}</Text>
+          <Text style={styles.value}>{jobDetail.location}</Text>
         </View>
         <View style={styles.group}>
           <Text style={styles.label}>Skills Required: </Text>
-          <Text style={styles.value}>{job.skills}</Text>
+          <Text style={styles.value}>{jobDetail.skills}</Text>
         </View>
         <View style={styles.group}>
           <Text style={styles.label}>Description: </Text>
-          <Text style={styles.value}>{job.description}</Text>
+          <Text style={styles.value}>{jobDetail.description}</Text>
         </View>
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Update Job"
+          onPress={() => props.navigation.navigate('UpdateJob', {jobId: jobDetail._id})}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          color='red'
+          title="Delete Job"
+          onPress={() => deleteJob().then(() => {props.navigation.navigate('JobList')})}
+        />
       </View>
     </ScrollView>
   );
@@ -72,6 +117,10 @@ const styles = StyleSheet.create({
     fontFamily: 'Ubuntu-Bold',
     fontSize: 18,
     flexShrink: 1
+  },
+  buttonContainer: {
+    marginHorizontal: 20,
+    marginVertical: 5
   },
 });
 

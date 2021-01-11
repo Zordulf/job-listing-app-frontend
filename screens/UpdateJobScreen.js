@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text, ScrollView, TextInput, Button, KeyboardAvoidingView, Alert } from 'react-native';
 import { Formik } from 'formik';
 import * as yup from 'yup';
@@ -14,7 +14,29 @@ const formSchema = yup.object({
   image: yup.string().required()
 });
 
-const AddJobScreen = (props) => {
+const UpdateJobScreen = (props) => {
+
+  const {jobId} = props.route.params;
+  const [jobDetail, setJobDetail] = useState([]);
+       
+  const getDetails = async () => {
+    fetch(`${baseURL}${jobId}`)
+      .then(res => res.json())
+      .then(async (data) => {
+        try {
+          setJobDetail(data);
+        } catch(e) {
+          console.log(e);
+        }
+      })
+  }
+
+  useEffect(() => {
+    getDetails();
+    return () => {
+      setJobDetail([]);
+    }
+  }, [])
 
   return (
     <KeyboardAvoidingView
@@ -24,27 +46,28 @@ const AddJobScreen = (props) => {
     >
       <ScrollView>
         <Formik
+          enableReinitialize={true}
           initialValues={{
-            position: '',
-            salary: '',
-            location: '',
-            skills: '',
-            description: '',
-            image: ''
+            position: jobDetail.position,
+            salary: jobDetail.salary + '',
+            location: jobDetail.location,
+            skills: jobDetail.skills,
+            description: jobDetail.description,
+            image: jobDetail.image
           }}
           validationSchema={formSchema}
           onSubmit={(values) => {
             // console.log(values);
             // dispatch(jobAction.createJob(values))
-            fetch(`${baseURL}`, {
-              method: 'POST',
+            fetch(`${baseURL}${jobId}`, {
+              method: 'PUT',
               headers: {
                 'Content-Type': 'application/json'
               },
               body: JSON.stringify(values)
             })
             .then(() => {
-              Alert.alert('Job created successfully!')
+              Alert.alert('Job updated successfully!')
             })
             .then(() => {
               props.navigation.navigate('JobList');
@@ -121,7 +144,7 @@ const AddJobScreen = (props) => {
               </View>
               <View style={styles.buttonContainer}>
                 <Button 
-                  title="Add Job"
+                  title="Update Job"
                   onPress={props.handleSubmit}
                 />
               </View>
@@ -163,4 +186,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AddJobScreen;
+export default UpdateJobScreen;

@@ -8,6 +8,10 @@ import AboutScreen from '../screens/AboutScreen';
 import AddJobScreen from '../screens/AddJobScreen';
 import JobDetailsScreen from '../screens/JobDetailsScreen';
 import JobListScreen from '../screens/JobListScreen';
+import JobSearchScreen from '../screens/JobSearchScreen';
+import UpdateJobScreen from '../screens/UpdateJobScreen';
+import LoginScreen from '../screens/LoginScreen';
+import RegisterScreen from '../screens/RegisterScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -21,6 +25,11 @@ function stackNavigator() {
         options={{title: 'Job Hunter'}}
       />
       <Stack.Screen
+        name="JobSearch"
+        component={JobSearchScreen}
+        options={{title: 'Job Search'}}
+      />
+      <Stack.Screen
         name="JobDetails"
         component={JobDetailsScreen}
         options={{title: 'Job Details'}}
@@ -29,6 +38,11 @@ function stackNavigator() {
         name="AddJob"
         component={AddJobScreen}
         options={{title: 'Add Job'}}
+      />
+      <Stack.Screen
+        name="UpdateJob"
+        component={UpdateJobScreen}
+        options={{title: 'Update Job'}}
       />
     </Stack.Navigator>
   );
@@ -45,31 +59,56 @@ function aboutStackNavigator() {
   );
 }
 
+function dashboardNavigator() {
+  return (
+    <Tab.Navigator
+      screenOptions={({route}) => ({
+        tabBarIcon: () => {
+          let iconName;
+          if(route.name == 'Home') {
+            iconName = 'home'
+          } else if (route.name == 'About') {
+            iconName = 'info'
+          }
+          return <MaterialIcons name={iconName} size={24} color='#72bcd4'/>
+        }
+      })}
+    >
+      <Tab.Screen
+        name="Home"
+        component={stackNavigator}
+      />
+      <Tab.Screen
+        name="About"
+        component={aboutStackNavigator}
+      />
+    </Tab.Navigator>
+  );
+}
+
 function AppNavigator() {
   return(
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({route}) => ({
-          tabBarIcon: () => {
-            let iconName;
-            if(route.name == 'Home') {
-              iconName = 'home'
-            } else if (route.name == 'About') {
-              iconName = 'info'
-            }
-            return <MaterialIcons name={iconName} size={24} color='#72bcd4'/>
-          }
-        })}
+      <Stack.Navigator
+        screenOptions = {{
+          headerShown: false
+        }}  
       >
-        <Tab.Screen
+        <Stack.Screen
+          name="Login"
+          component={LoginScreen}
+          options={{title: 'Login'}}
+        />
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
+          options={{title: 'Register'}}
+        />
+        <Stack.Screen
           name="Home"
-          component={stackNavigator}
+          component={dashboardNavigator}
         />
-        <Tab.Screen
-          name="About"
-          component={aboutStackNavigator}
-        />
-      </Tab.Navigator>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
