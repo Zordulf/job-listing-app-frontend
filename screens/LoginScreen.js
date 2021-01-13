@@ -8,14 +8,17 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Platform
+  Platform,
+  Alert
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from 'yup';
 
+import baseURL from '../assets/common/baseUrl';
+
 const formSchema = yup.object({
-    email: yup.string().email().required(),
-    password: yup.string().required().min(6)
+    email: yup.string().email().required().max(50),
+    password: yup.string().required().min(6).max(50)
 })
 
 const LoginScreen = navData => {
@@ -30,8 +33,25 @@ const LoginScreen = navData => {
         }}
         validationSchema={formSchema}
         onSubmit={(values) => {
-          console.log(values);
-          navData.navigation.navigate('Home')
+          // console.log(values);
+          // navData.navigation.navigate('Home')
+          fetch(`${baseURL}login/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(values)
+          })
+          .then(() => {
+            // console.log(res);
+            Alert.alert("Welcome!");
+          })
+          .then(() => {
+            navData.navigation.navigate('Home');
+          })
+          .catch(() => {
+            Alert.alert('Wrong email or password. Please try again.', [{text: 'OK'}]);
+          })
         }}
       >
         {(props) => (

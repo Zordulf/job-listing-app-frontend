@@ -9,14 +9,17 @@ import {
   TouchableOpacity,
   Image,
   Platform,
+  Alert
 } from "react-native";
 import { Formik } from "formik";
 import * as yup from "yup";
 
+import baseURL from '../assets/common/baseUrl';
+
 const formSchema = yup.object({
-  fullName: yup.string().required().min(3),
-  email: yup.string().email().required(),
-  password: yup.string().required().min(6),
+  fullName: yup.string().required().min(6).max(50),
+  email: yup.string().email().required().min(6).max(50),
+  password: yup.string().required().min(6).max(50),
 });
 
 const RegisterScreen = (navData) => {
@@ -33,8 +36,24 @@ const RegisterScreen = (navData) => {
         }}
         validationSchema={formSchema}
         onSubmit={(values) => {
-          console.log(values);
-          navData.navigation.navigate("Home");
+          // console.log(values);
+          // navData.navigation.navigate("Login");
+          fetch(`${baseURL}register/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(values)
+          })
+          .then(() => {
+            Alert.alert('User created successfully!')
+          })
+          .then(() => {
+            navData.navigation.navigate('Login');
+          })
+          .catch(() => {
+            Alert.alert('An error occurred, please try again.', [{text: 'OK'}]);
+          })
         }}
       >
         {(props) => (
